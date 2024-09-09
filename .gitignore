@@ -1,0 +1,42 @@
+# Visual Studio
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ncb
+*.opendb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# 빌드 디렉토리
+/obj/
+*/Debug/
+*/Release/
+*/x64/Debug/
+*/x64/Release/
+
+# 패키지 관련
+/packages/
+
+# CMake 빌드 디렉토리
+/CMakeFiles/
+CMakeCache.txt
+*.cmake
+*.ninja
+*.build
+*.make
+*.d
+
+# Windows-specific
+Thumbs.db
+Desktop.ini
+
+# 기타
+*.log
+*.tmp
+*.swp
+*.DS_Store

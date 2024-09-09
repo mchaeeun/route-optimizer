@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.35116.124
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "route-optimizer", "route-optimizer\route-optimizer.vcxproj", "{41BD8901-F328-4616-B04A-5AFC2F19147E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{41BD8901-F328-4616-B04A-5AFC2F19147E}.Debug|x64.ActiveCfg = Debug|x64
+		{41BD8901-F328-4616-B04A-5AFC2F19147E}.Debug|x64.Build.0 = Debug|x64
+		{41BD8901-F328-4616-B04A-5AFC2F19147E}.Debug|x86.ActiveCfg = Debug|Win32
+		{41BD8901-F328-4616-B04A-5AFC2F19147E}.Debug|x86.Build.0 = Debug|Win32
+		{41BD8901-F328-4616-B04A-5AFC2F19147E}.Release|x64.ActiveCfg = Release|x64
+		{41BD8901-F328-4616-B04A-5AFC2F19147E}.Release|x64.Build.0 = Release|x64
+		{41BD8901-F328-4616-B04A-5AFC2F19147E}.Release|x86.ActiveCfg = Release|Win32
+		{41BD8901-F328-4616-B04A-5AFC2F19147E}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4DA675F9-A7AD-480A-9C28-6652CDE82F2E}
+	EndGlobalSection
+EndGlobal
