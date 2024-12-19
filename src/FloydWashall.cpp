@@ -3,6 +3,7 @@
 #include <cstring>
 #include <fstream>
 #include <string>
+#include <conio.h> // _getch 사용
 
 using namespace std;
 
@@ -37,7 +38,7 @@ public:
 
     void floyd();
     void trace_path(int u, int v);
-    void print_path(int u, int v);
+    bool print_path(int u, int v);
 
     int getIndex(string v);
     string getroute(int i) { return route[i].label; }
@@ -191,9 +192,13 @@ void WtGraph::trace_path(int u, int v) {
     }
 }
 
-void WtGraph::print_path(int u, int v) {
+bool WtGraph::print_path(int u, int v) {
+    if (u < 0 || v < 0) {
+        return false;
+    }
     route[route_size++].label = vertexList[u].label;
     trace_path(u, v);
+    return true;
 }
 
 
@@ -220,15 +225,18 @@ private:
 public:
     img(int ignored) { wonarr = new img_node[300]; sinarr = new img_node[300]; };
     ~img() {};
-    void insertLoc(string n, float x, float y) { // 이미지 상 위치값 저장
+    bool insertLoc(string n, float x, float y) { // 이미지 상 위치값 저장
         if (!n.rfind("원", 0)) {
             img_node* tmp = new img_node(n, x, y);
             wonarr[wonarr_size++] = *tmp;
+            return true;
         }
         else if (!n.rfind("신", 0)) {
             img_node* tmp = new img_node(n, x, y);
             sinarr[sinarr_size++] = *tmp;
+            return true;
         }
+        return false;
 
     }
     Mat getimgLoc() {
@@ -247,6 +255,7 @@ public:
                     return Point(sinarr[i].getx(), sinarr[i].gety());
             }
         }
+        return Point(-1, -1);
     }
 
     void print_img(string loc_node) {
@@ -312,6 +321,80 @@ public:
     }
 };
 
+
+// 가능한 명령어 목록
+vector<string> commandList = {
+    "원흥관", "신공학관"
+};
+
+// 입력값을 기반으로 가장 유사한 자동완성 단어를 찾는 함수
+string getAutoComplete(const string& input) {
+    if (input.empty()) {
+        return commandList.front(); // 첫 번째 문자열 반환
+    }
+    for (auto it = commandList.begin(); it != commandList.end(); ++it) {
+        const auto& command = *it;
+
+        // 비교해서 매칭되는 경우 (input과 command가 같을 경우)
+        if (input.compare(command) == 0) {
+            auto nextIt = next(it);
+            // 현재 command의 다음 항목 반환
+            if (nextIt != commandList.end()) {
+                return *nextIt; // 다음 항목 반환
+            }
+            else {
+                return ""; // 다음 항목이 없다면 빈 문자열 반환
+            }
+        }
+
+        // 접두어 매칭
+        if (command.find(input) == 0) {
+            return command;
+        }
+    }
+    return ""; // 일치하는 단어가 없으면 빈 문자열 반환
+}
+
+void setEdge(string& edge) {
+    char ch;
+    // 입력 루프
+    while (true) {
+        ch = _getch();
+        if (ch == '\r') { // Enter 키 (입력 완료)
+            cout << endl;
+            break; // 입력 종료
+        }
+        else if (ch == '\b') { // Backspace 키 (입력 삭제)
+            if (!edge.empty()) {
+                edge.pop_back();
+                cout << "\b \b"; // 커서를 뒤로 이동하고 공백 출력
+            }
+        }
+        else if (ch == '\t') { // Tab 키 (자동완성)
+            string suggestion = getAutoComplete(edge);
+            if (!suggestion.empty()) {
+                // 커서 이동
+                cout << "\033[" << edge.size() << "D" << flush;
+                edge = suggestion; // 자동완성 단어로 교체
+                cout << edge; // 현재 입력 상태를 새로 출력
+            }
+            else {
+
+            }
+        }
+        else if (ch == 26) { // Ctrl + Z (ASCII 코드 26)
+            exit(0); // 프로그램 종료
+        }
+        else {
+            edge += ch; // 일반 키 입력 추가
+            cout << ch;
+        }
+    }
+    if (edge.empty()) {
+        cout << "※ 지원하지 않는 장소이거나 잘못된 입력입니다" << endl;
+    }
+}
+
 int main() {
     WtGraph testGraph(defMaxGraphSize);         // Test graph
     string v1, v2;   // Vertex labels
@@ -337,46 +420,61 @@ int main() {
 
     testGraph.floyd();
 
-    string start, end;
-    cout << "출발 강의실을 입력하세요 (ex 원흥관 314): ";
-    getline(cin, start);
-    cout << "도착 강의실을 입력하세요 (ex 신공학관 6119): ";
-    getline(cin, end);
+    cout << "Route Optimizer! " << endl;
+    cout << "동국대학교 원흥관과 신공학관 건물 내 최단 거리 경로를 제공합니다" << endl;
+    cout << "※ 프로그램 종료를 원하면 Ctrl + Z를 누르세요\n" << endl;
 
-    // -- 이미지 출력 --
-    img testImg(300);
+    while (true) {
+        string start = "",
+            end = "";
+        while (start.empty()) {
+            cout << "출발 강의실을 입력하세요 (ex 원흥관 314): ";
+            setEdge(start);
+        }
+        while (end.empty()) {
+            cout << "도착 강의실을 입력하세요 (ex 신공학관 6119): ";
+            setEdge(end);
+        }
 
-    // ---- 이미지 노드 데이터 파일 읽기 ----
-    fstream fsi;
-    string buf;
-    string v; float x, y;
-    fsi.open("../resource/img_node.csv", ios::in);
-    while (!fsi.eof()) {
-        getline(fsi, buf, ',');
-        v = buf;
-        getline(fsi, buf, ',');
-        x = stof(buf);
-        getline(fsi, buf, '\n');
-        y = stof(buf);
-        testImg.insertLoc(v, x, y);
+        // -- 이미지 출력 --
+        img testImg(300);
+
+        // ---- 이미지 노드 데이터 파일 읽기 ----
+        fstream fsi;
+        string buf;
+        string v; float x, y;
+        fsi.open("../resource/img_node.csv", ios::in);
+        while (!fsi.eof()) {
+            getline(fsi, buf, ',');
+            v = buf;
+            getline(fsi, buf, ',');
+            x = stof(buf);
+            getline(fsi, buf, '\n');
+            y = stof(buf);
+            testImg.insertLoc(v, x, y);
+        }
+        fsi.close();
+
+        // -- 경로 생성 --
+        bool isFound = testGraph.print_path(testGraph.getIndex(start), testGraph.getIndex(end));
+
+        // 경로를 찾은 경우
+        if (isFound) {
+            // -- 텍스트 경로 생성 --
+            cout << "* 경로 *" << endl;
+
+            for (int i = 0; testGraph.getroute(i) != ""; i++) {
+                cout << testGraph.getroute(i) << endl;
+            }
+            // -- 이미지 경로 생성 --
+            for (int i = 0; testGraph.getroute(i) != ""; i++) {
+                testImg.print_img(testGraph.getroute(i));
+            }
+
+            imshow("", testImg.getimgLoc());
+            waitKey(0);
+        } else { // 경로를 못 찾은 경우
+            cout << "경로를 찾을 수 없습니다\n" << endl;
+        }
     }
-    fsi.close();
-
-    // -- 경로 생성 --
-    testGraph.print_path(testGraph.getIndex(start), testGraph.getIndex(end));
-
-    // -- 텍스트 경로 생성 --
-    for (int i = 0; testGraph.getroute(i)!=""; i++) {  //debug
-        cout << testGraph.getroute(i) << endl;
-    }
-    // -- 이미지 경로 생성 --
-    for (int i = 0; testGraph.getroute(i) != ""; i++) {
-        testImg.print_img(testGraph.getroute(i));
-    }
-
-    imshow("", testImg.getimgLoc());
-    if (waitKey(0) == 27)
-        return 0;
 }
-
-//
