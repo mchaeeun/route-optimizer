@@ -8,10 +8,10 @@
 using namespace std;
 
 // -- for image --
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/videoio.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
+#include "../opencv/include/opencv2/imgcodecs.hpp" // 이미지 입출력
+#include "../opencv/include/opencv2/highgui.hpp" // GUI
+#include "../opencv/include/opencv2/imgproc.hpp" // 이미지 처리
+
 using namespace cv;
 
 const int defMaxGraphSize = 700,      // Default number of vertices
